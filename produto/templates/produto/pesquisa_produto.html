@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block titulo %}
+   Pesquisa de Produto
+{% endblock %}
+
+{% block estilo %}
+   
+{% endblock %}
+
+{% block conteudo %}
+<div class='mb-4'>
+        <h4 class='mb-3'>Pesquisa de Produto</h4>
+        <hr class='mt-0 mb-0'>
+     </div>
+  
+     <form action="{% url 'produto:lista_produto_cadastrado' %}" method ='GET'>
+        <div class='form-group row' style='margin-bottom: 10px;'>        
+           <label for='id_busca_por'                                   
+                  class='col-lg-1 col-form-label font-weight-bold'>     
+              Nome                                              
+           </label>                                                     
+           <div class='col-lg-9'>                                      
+              {{ form.busca_por }}                                     
+           </div>
+           <div class="col-lg-2">
+                <button type='submit' class='btn btn-primary'>
+                   <img src="{% static 'produto/imagens/skin/database_table.png' %}"/>
+                   Pesquisar
+                </button>
+             </div>                                                       
+        </div>                                                          
+        
+
+     </form>
+  
+     <div class='modal modal-md fade' tabindex='-1' id='remove-produto-modal'>
+        <div class='modal-dialog'>
+           <div class='modal-content'>
+              <div class='modal-header'>
+                 <span class='modal-title font-weight-bold'>Janela de Confirmação</span>
+              </div>
+              <div class='modal-body'>
+                 <div class='form-group row'>
+                    <div class='container font-weight-bolder'>
+                       Confirma a remoção do produto?
+                    </div>
+                 </div>
+                 <div class='text-right'>
+                    <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancelar</button>
+                    <button id='btn-submit' type='button' class='btn btn-primary'>Remover</button>
+                 </div>
+              </div>
+           </div>   
+        </div>
+     </div>
+  
+     {% if produtos %}
+  
+        <h5 class="mb-4 mt-4">Lista de Produtos</h5>
+        <table style='width:100%'
+               class='table table-striped table-sm table-bordered'>
+           <thead>
+              <tr>
+                 <th class='texto text-center'>Categoria</th>
+                 <th class='texto text-center'>Nome</th>
+                 <th class='texto text-center'>Tamanho</th>
+                 <th class='texto text-center'>Preço</th>
+                 <th class='texto text-center'>Operação</th>
+              </tr>
+           </thead>
+           <tbody>
+              {% for produto in produtos %}
+                 <tr>
+                    <td width='20%' class='text-left'>
+                       <span class='texto'>
+                          {{ produto.categoria }}
+                       </span>
+                    </td>
+                    <td width='35%' class='text-left'>
+                       <span class='texto'>
+                          <a href="{% url 'produto:exibe_produto_cadastrado' produto.id %}">
+                             {{ produto.nome }}
+                          </a>
+                       </span>
+                    </td>
+                    <td width='15%' class='text-center'>
+                       <span class='texto'>
+                          {{ produto.tamanho}}
+                       </span>
+                    </td>
+                    <td width='15%' class='text-right pr-2'>
+                       <span class='texto'>
+                          {{ produto.preco}}
+                       </span>
+                    </td>
+                    <td width='15%' class='text-right pr-2'>
+                       <form style='margin-bottom: 0px;'                            
+                             action ="{% url 'produto:remove_produto' %}" 
+                             method ='post' novalidate>                             
+                          {% csrf_token %}                                          
+                       {# {{ form_remove_produto.produto_id }} #}
+                          <button type='button' class='btn btn-danger btn-block remover'>             
+                             <img src="{% static 'produto/imagens/skin/database_delete.png' %}"> Remover        
+                          </button>                                                 
+                       </form>                                                      
+                    </td>
+                 </tr>
+              {% endfor %}
+              <tr>
+                 <td colspan='3' width='85%' class='text-left'>
+                    <span class='texto font-weight-bold'>
+                       Total...
+                    </span>
+                 </td>
+                 <td width='15%' class='text-right pr-2'>
+                    <span class='texto font-weight-bold'>
+                       {{ total }}
+                    </span>
+                 </td>
+              </tr>
+           </tbody>
+        </table>
+  
+        <div class='row' style='font-size: 14px;'>
+           <div class='col-12'>
+              {% if produtos.has_other_pages %}
+                 <ul class='pagination'>
+                    {% if produtos.has_previous %}
+                       <li class='page-item'><a class='page-link' href='?pagina={{ produtos.previous_page_number }}&busca_por={{ busca_por }}'>Anterior</a></li>
+                    {% else %}
+                       <li class='page-item disabled'><a class='page-link' href='#' tabindex='-1'>Anterior</a></li>
+                    {% endif %}
+                    {% for i in produtos.paginator.page_range %}
+                       {% if produtos.number == i %}
+                          <li class='page-item active'><a class='page-link' href='#'>{{ i }} </a></li>
+                       {% else %}
+                          <li class='page-item'><a class='page-link' href='?pagina={{ i }}&busca_por={{ busca_por }}'>{{ i }}</a></li>
+                       {% endif %}
+                    {% endfor %}
+                    {% if produtos.has_next %}
+                       <li class='page-item'><a class='page-link' href='?pagina={{ produtos.next_page_number }}&busca_por={{ busca_por }}'>Próxima</a></li>
+                    {% else %}
+                       <li class='page-item disabled'><a class='page-link' href='#' tabindex='-1'>Próxima</a></li>
+                    {% endif %}
+                 </ul>
+              {% endif %}
+           </div>
+        </div>
+     {% endif %}
+{% endblock %}
+
+{% block domready %}
+   let form
+   $(".remover").click(function() {
+      form = $(this).parent()
+      $("#remove-produto-modal").modal('show')
+   })
+   $("#btn-submit").click(function(){
+      let lista_de_ids = {{ lista_de_ids }}
+      let ind = $(form).parent().parent().index()
+      let input = "<input type='hidden' name='produto_id' value='" + lista_de_ids[ind] + "'>"
+      alert(lista_de_ids + " - " + lista_de_ids[ind])
+      $(form).append(input)
+      $(form).submit()
+   })
+
+{% endblock %}
+
+

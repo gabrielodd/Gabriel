@@ -1,0 +1,112 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="{% static 'produto/css/bootstrap.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'produto/css/base.css' %}" />
+    <title>{% block titulo %}PlantaAI{% endblock %}</title>
+    {% block estilo %}
+        <style>
+
+        </style>
+    {% endblock %}
+</head>
+<body class="barra">
+    <nav id="barra-nav" class="navbar bg-success navbar-expand-md">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'produto:lista_produtos' %}">
+                <img src="{% static 'produto/css/images/logo.png' %}" style="width: 75px">
+            </a>
+            <form class="form-inline">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Nome da planta" aria-label="Search">
+                    <a href="{% url 'produto:pesquisa_produto' %}">
+                        <button class="btn btn-light my-3 my-sm-0" 
+                            type="button">Buscar
+                        </button>
+                    </a>
+                  </form>
+            <div class="navbar-nav">
+                <a class="nav-link nav-item text-white text-right" href="">
+                    <img src="{% static 'produto/css/images/pedidos.png' %}" style="width: 55px">
+                    Pedidos
+                </a>
+                <a class="nav-link nav-item text-white" href="{% url 'produto:adiciona_carrinho' %}">
+                    <img src="{% static 'produto/css/images/carrinho-de-compras.png' %}" style="width: 55px">
+                    Meu carrinho
+            </div>
+            </a>
+        </div>
+    </nav>
+    <nav id="barra-nav2" class="navbar navbar-expand-md" style="background-color: ivory;">
+        <div class="container">
+            <div class="navbar-nav font-weight-bold">
+                <a class="nav-link nav-item ml-5" href="{% url 'produto:cadastra' %}">
+                    <img src="{% static 'produto/imagens/skin/lock.png' %}" style="width: 40px">
+                    Cadastrar Produto
+                </a> 
+                <a class="nav-link nav-item ml-4 " href="{% url 'produto:pesquisa_produto' %}">
+                    <img src="{% static 'produto/imagens/skin/search.png' %}" style="width: 40px">
+                    Buscar Produto
+                </a>     
+        </div>
+    </nav>
+    <br><br>
+
+    <div class="container">
+        {% block conteudo %}
+
+        {% endblock %}
+    </div>
+
+    <div class="footer bg-light mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <img src="{% static 'produto/css/images/logo.png' %}" alt="logoFooter" style="width: 100px">
+                </div>   
+            
+            <div class="col-lg-3">
+                <h4>Endereço</h4>
+                <ul class="list-unstyled">
+                    <li>Rua das plantas, 9999</li>
+                    <li>Niterói - RJ</li>
+                    <li>Brasil</li>
+                    </ul>
+                </div>
+            <div class="col-lg-3">
+                    <h4>Pagamento</h4>
+                    <ul class="list-unstyled">
+                        <li>Cartão de crédito</li>
+                        <li>Cartão de débito</li>
+                        <li>Boleto</li>
+                        </ul>
+            </div>
+            <div class="col-lg-3">
+                    <h4>Contato</h4>
+                    <ul class="list-unstyled">
+                        <li>PlantaAI</li>
+                        <li>(99)99999-9999</li>
+                        <li><a href='plantai@plti.com.br'>plantai@plti.com.br</a>
+                        </li>
+                        </ul>
+                </div>
+        </div>
+    </div>
+    <script src="{% static 'produto/js/jquery-3.3.1.js' %}"></script>
+    <script src="{% static 'produto/js/popper.js' %}"></script>
+    <script src="{% static 'produto/js/bootstrap.js' %}"></script>
+    <script src="{% static 'produto/js/script.js' %}"></script>
+    <script src="{% static 'produto/js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'produto/js/jquery.mask.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            {% block domready %}
+
+            {% endblock %}
+        });
+    </script>
+</body>
+</html>

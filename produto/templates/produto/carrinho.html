@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block conteudo %}
+
+<h3 class="mb-4"><img src="{% static 'produto/css/images/carrinho-de-compras.png' %}" style="width: 65px">Carrinho
+</h3>
+<div id="ajax">
+<table style='width:100%'
+      class='table table-striped table-sm table-bordered'>
+   <thead>
+      <tr>
+         <th class='texto text-center' style="background-color: greenyellow">Categoria</th>
+         <th class='texto text-center' style="background-color: greenyellow">Nome</th>
+         <th class='texto text-center' style="background-color: greenyellow">Quantidade</th>
+         <th class='texto text-center' style="background-color: greenyellow">Preço</th>
+         <th class='texto text-center' style="background-color: greenyellow">Total</th>
+         <th class='texto text-center' style="background-color: greenyellow">Operação</th>
+      </tr>
+   </thead>
+   <tbody>
+      {% for carrinho, form_atualiza_produto in listas %}
+         <tr>
+            <td style="display: none">
+               {{ carrinho.id }}
+            </td>
+            <td width='10%' class='text-left'>
+                <span class='texto'>
+                   {{ carrinho.produto.categoria }}
+                </span>
+             </td>
+            <td width='40%' class='text-left'>
+               <span class='texto'>
+                  <img src="{% static 'produto/imagens/' %}{{ carrinho.produto.imagem }}" style="width: 36px;">
+                  {{ carrinho.produto }}
+               </span>
+            </td>
+            <td width='15%'>
+               <form action="{% url 'produto:atualiza_produto' %}"
+                     class='mx-auto' style='width: 55px'
+                     method='POST' novalidate>
+                        {% csrf_token %}
+                        {{ form_atualiza_produto.quantidade }}
+               </form>
+            </td>
+            <td width='10%' class='text-right pr-2'>
+               <span class='texto'>
+                  {{ carrinho.preco }}
+               </span>
+            </td>
+            <td width='10%' class='text-right pr-2'>
+               <span class='texto'>
+                  {{ carrinho.total }}
+               </span>
+            </td>
+            <td width='15%' class='text-center'>
+               <form style='margin-bottom: 0px;'                            
+                     action ="{% url 'produto:remove_carrinho' %}" 
+                     method ='post' novalidate>                             
+                  {% csrf_token %}                                          
+                  <button type='button' class='btn btn-sm btn-danger remover'>             
+                     <img src="{% static 'produto/images/skin/database_delete.png' %}"> Remover        
+                  </button>                                                 
+               </form>                                                      
+            </td>
+         </tr>
+      {% endfor %}
+      <tr>
+         <td colspan='4' class='text-left' style="background-color: greenyellow">
+            <span class='texto font-weight-bold'>
+               Total...
+            </span>
+         </td>
+         <td class='text-right pr-2 'style="background-color: greenyellow">
+             <span id='total' class='texto font-weight-bold'>
+                {{ total }}
+             </span>
+             <td width='15%' class='text-center' style="background-color: greenyellow"></td>
+      </tr>
+   </tbody>
+</table>
+</div>
+
+{% endblock %}
+
+{% block domready %}
+   let lista_de_ids = {{ lista_de_ids }} 
+   $("#inclusao").submit(function(e) {
+      e.preventDefault()
+      let url = $(this).attr('action')
+      let formData = $(this).serializeArray()
+      $.post(url, formData, function(resposta) {
+         let conteudo = $(resposta).find("tbody tr:first")
+         $("tbody tr:last").before("<tr style='display: none'>" + $(conteudo).html() + "</tr>")
+         $("tr:hidden").fadeIn('slow')
+         let total = $(resposta).find("#total")
+         $("#total").text($(total).text())
+         let id = $(conteudo).find("td:first").text()
+         id = parseInt(id)
+         console.log(lista_de_ids)
+         lista_de_ids.push(id)
+         console.log(lista_de_ids)
+      })
+   })
+
+   $("#ajax").on("click", ".remover", function() {
+      let form = $(this).parent()
+      let tr = $(form).parent().parent()
+      let ind = $(tr).index()
+      let id = lista_de_ids[ind]
+      $(form).append("<input type='hidden' name='produto_id' value='" + id + "'>")
+      let url = $(form).attr('action')
+      let formData = $(form).serializeArray()
+      console.log(lista_de_ids)
+      $.post(url, formData, function(resultado) {
+         $(tr).fadeTo('slow', 0.3, function() {
+            $(this).remove()
+            lista_de_ids.splice(ind, 1)
+            $("#total").text(resultado)
+            console.log(lista_de_ids)
+         })
+      })
+   })
+
+   $("#ajax").on("blur", "input.quantidade", function() {
+      if ($(this).val() <= 0) {
+         $(this).focus()
+         return
+      }
+      let form = $(this).parent()
+      let tr = $(form).parent().parent()
+      let ind = $(tr).index()
+      let id = lista_de_ids[ind]
+      $(form).append("<input type='hidden' name='produto_id' value='" + id + "'>")
+      let url = $(form).attr('action')
+      let formData = $(form).serializeArray()
+      $.post(url, formData, function(resultado) {
+         $("#total").text(resultado)
+      })
+   })
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block titulo %}
+    Cadastro de Produtos
+{% endblock %}
+
+{% block conteudo %}
+    <div class="row">
+        <div class="col-12">
+            <h4 class="mb-2">Cadastro de Produtos</h4>
+            <hr class="mb-4">
+        </div>
+    </div>
+
+    {% if messages %}
+        <div class="row mb-3">
+            <div class="col-12">
+                {% for message in messages %}
+                    <ul class="list-group rounded {{ message.tags }}">
+                        {# Supondo a utilização de apenas info e danger #}
+                        <li style="padding-top: 7px; padding-bottom: 7px;"
+                            class="list-group-item list-group-item-{% if message.tags == 'info' %}info{% else %}danger{% endif %}">
+                            {{ message }}
+                        </li>
+                    </ul>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+
+    <form id="form" action ="{% url 'produto:cadastra' %}" method ="POST" novalidate>
+
+        <div class="form-group row" style="margin-bottom: 10px;">
+            <label for="id_categoria" class="col-lg-1 col-form-label font-weight-bold">Categoria</label>
+            <div class="col-lg-5">
+                {{ form.categoria }}
+                {% if form.categoria.errors %}
+                    <div class="alert alert-danger mb-0"
+                         style="padding-top: 2px; padding-bottom: 2px;">
+                        {% for error in form.categoria.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <label for="id_tamanho" class="col-lg-1 col-form-label font-weight-bold">Tamanho</label>
+            <div class="col-lg-5">
+                {{ form.tamanho }}
+                {% if form.tamanho.errors %}
+                    <div class="alert alert-danger mb-0"
+                         style="padding-top: 2px; padding-bottom: 2px;">
+                        {% for error in form.tamanho.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>                                                                             
+        
+
+        <div class="form-group row" style="margin-bottom: 10px;">
+            <label for="id_nome" class="col-lg-1 col-form-label font-weight-bold">Nome</label>
+            <div class="col-lg-5">
+                {{ form.nome }}
+                {% if form.nome.errors %}
+                    <div class="alert alert-danger mb-0" style="padding-top: 2px; padding-bottom: 2px;">
+                        {% for error in form.nome.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <label for="id_slug" class="col-lg-1 col-form-label font-weight-bold">Slug</label>
+            <div class="col-lg-5">
+                {{ form.slug }}
+                {% if form.slug.errors %}
+                    <div class="alert alert-danger mb-0" style="padding-top: 2px; padding-bottom: 2px;">
+                        {% for error in form.slug.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group row" style="margin-bottom: 10px;">
+            <label for="id_descricao" class="col-lg-1 col-form-label font-weight-bold">Descrição</label>
+                <div class="col-lg-11">
+                    {{ form.descricao }}
+                    {% if form.descricao.errors %}
+                        <div class="alert alert-danger mb-0" style="padding-top: 2px; padding-bottom: 2px;">
+                            {% for error in form.descricao.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        <div class="form-group row" style="margin-bottom: 10px;">
+            <label for="id_imagem" class="col-lg-1 col-form-label font-weight-bold">Imagem</label>
+            <div class="col-lg-8">
+                {{ form.imagem }}
+                {% if form.imagem.errors %}
+                    <div class="alert alert-danger mb-0" style="padding-top: 2px; padding-bottom: 2px;">
+                        {% for error in form.imagem.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <label for="id_preco" class="col-lg-1 col-form-label font-weight-bold">Preço</label>
+            <div class="col-lg-2">
+                {{ form.preco }}
+                {% if form.preco.errors %}
+                    <div class="alert alert-danger mb-0" style="padding-top: 2px; padding-bottom: 2px;">
+                        {% for error in form.preco.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+                                                         
+        <div class="form-group row" style="margin-top: 20px;">
+            <div class="col-lg-8 offset-2">
+                {% csrf_token %}
+                <button id="botao" type="button" class="btn btn-success btn-block"><img src="{% static 'produto/imagens/skin/database_add.png' %}">
+                    {% if form.produto_id.value %}
+                       Alterar
+                    {% else %}
+                       Cadastrar Produto
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
+
+{% block domready %}
+
+    $("#botao").click(function() {
+        $("#form").append('{{ form.produto_id }}')
+        $("#form").submit()
+    })
+
+{% endblock %}

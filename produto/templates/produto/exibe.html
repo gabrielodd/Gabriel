@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block titulo %}
+    Comprar
+{% endblock %}
+
+{% block estilo %}
+    <style>
+        a {
+            color: green;
+        }
+    </style>
+{% endblock %}
+
+{% block conteudo %}
+    <div class="row">
+        <div class="col-md-5 mb-3 mb-md-0">
+            <img class="img-fluid rounded" 
+            src="{% static 'produto/imagens/' %}{{ produto.imagem }}">
+      </div>
+      <div class="col-md-7">
+         <h4>{{ produto.nome }}</h4> 
+         <h5><a href="{{ produto.categoria.get_absolute_path }}">{{ produto.categoria }}</a></h5>    
+         <div class="d-block border border-secondary text-center rounded">
+             <p class="text-dark">Vendido por PlantaAI 
+                 <img src="{% static 'produto/css/images/logo.png' %}" style="width: 40px">
+             </p>
+         <h3>R$ {{ produto.preco }}</h3>
+         <small class="mx-2">{{ produto.descricao }}</small><br> 
+         <form id='action' action ="{% url 'produto:exibe_produto' produto.id produto.slug %}" method ="POST" novalidate>
+            {% csrf_token %}    
+            <button type="submit" class="btn btn-success mt-3 font-weight-bold">
+                <img src="{% static 'produto/css/images/carrinho-de-compras.png' %}" style="width: 45px">
+                Adicionar ao carrinho
+            </button>
+        </form>
+         <hr>
+         <div class="text-left ml-3">
+             <h4>Formas de pagamento</h4>
+             <img src="{% static 'produto/css/images/boleto.svg' %}" class="mr-2" style="width: 40px">Boleto<br>
+             <img src="{% static 'produto/css/images/cc.png' %}" class="mr-2" style="width: 40px">Cartão de crédito
+            </div>
+        </div>
+      </div>
+   </div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block titulo %}
+    Produtos
+{% endblock %}
+
+{% block estilo %}
+    <style>
+    .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+            color: #fff;
+            background-color: green;
+        }
+      a {
+         color: green;
+      }  
+    </style>
+{% endblock %}
+
+{% block conteudo %}
+
+   <div class="row">
+      <div class="col-lg-2">
+            <h3>Categorias</h3>
+            <div class="nav flex-column nav-pills">
+               <a class="nav-link {% if not categoria %}active{% endif %}" 
+                  href="/">Todos</a>
+            {% for cat in categorias %}
+               <a class="nav-link {% if cat == categoria %}active{% endif %}" 
+                  href="{{ cat.get_absolute_path }}">
+                  {{ cat.nome }}
+               </a>
+            {% endfor %}
+         </div>
+            <h3>Tamanho</h3>
+            <div class="nav flex-column nav-pills">
+               {% for tam in tamanhos %}
+                  <a class="nav-link {% if tam == tamanho %}active{% endif %}" 
+                     href="{{ tam.get_absolute_path }}">
+                     {{ tam.nome }}
+                  </a>
+               {% endfor %}   
+            </div>
+                 
+      </div>
+      <div class="col-lg-10">
+         <h3>{% if not categoria %}Produtos{% else %}{{ categoria.nome }}{% endif %}</h3>
+         <div class="row">
+            {% for produto in produtos %}
+               <div class="col-xl-4 col-lg-6">
+               <div class="card mb-3 border-success">
+                  <a href="{{ produto.get_absolute_path }}">
+                     <img class="img-fluid rounded card-img-top" height="220px" width="220px" 
+                          src="{% static 'produto/imagens/' %}{{ produto.imagem }}">
+                  </a>
+                  <div class="card-body">
+                  <h5 class="mt-3" style="font-size: 16px">
+                     {{ produto.nome }}
+                  </h5>
+                  <h4>
+                  R$ {{ produto.preco }}
+               </h4>
+               <div class="card-footer bg-white">
+                     <a href="{{ produto.get_absolute_path }}">
+                     <div class="text-right">
+                        <button class="btn btn-success btn-sm">Comprar</button>
+                     </div>
+                     </a>
+               </div>
+                  </div>
+               </div>
+               </div>
+            {% endfor %}        
+            </div>
+         </div>
+      </div>
+   </div>
+{% endblock %}

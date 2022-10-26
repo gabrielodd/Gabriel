@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block titulo %}
+   Página de Login
+{% endblock %}
+
+{% block conteudo %}
+   <div class='mb-4'>
+      <h4 class='mb-2'>Página de Login</h4>
+      <hr class='mt-0 mb-0'>
+   </div>
+
+   {% if form.non_field_errors %}
+      <div class='row mt-1 mb-3'>
+         <div class='col-sm-6'>
+            <ul class='list-group' style='padding-top: 0px; padding-bottom: 0px;'>
+               {% for error in form.non_field_errors %}
+                  <li style='padding-top: 7px; padding-bottom: 7px;'
+                      class='list-group-item list-group-item-danger'>
+                     {{ error }}
+                  </li>
+               {% endfor %}
+            </ul>
+         </div>
+         <div class='col-sm-6'></div>
+      </div>
+   {% endif %}
+
+   <form action="{% url 'autenticacao:login' %}" 
+         method ='POST' novalidate>
+
+      <div class='form-group row' style='margin-bottom: 10px;'>        
+         <label for='id_username'                                   
+                class='col-lg-1 col-form-label font-weight-bold'>     
+            Conta                                              
+         </label>                                                     
+         <div class='col-lg-5'>                                      
+            {{ form.username }}                                     
+            {% if form.username.errors %}                           
+               <div class='alert alert-danger mb-0'                   
+                    style='padding-top: 2px; padding-bottom: 2px;'>   
+                  {% for error in form.username.errors %}           
+                     <small>{{ error }}</small>                       
+                  {% endfor %}                                        
+               </div>                                                 
+            {% endif %}                                               
+         </div>                                                       
+      </div>                                                          
+      <!--                                                            
+      <input type='text'                                              
+             name='username'                                        
+             id='id_username'                                       
+             class='form-control form-control-sm'                     
+             maxlength='50'                                           
+             required>                                                
+      -->                                                                
+      <div class='form-group row' style='margin-bottom: 10px;'>        
+         <label for='id_password'                                   
+                class='col-lg-1 col-form-label font-weight-bold'>     
+            Senha                                              
+         </label>                                                     
+         <div class='col-lg-5'>                                      
+            {{ form.password }}                                     
+            {% if form.password.errors %}                           
+               <div class='alert alert-danger mb-0'                   
+                    style='padding-top: 2px; padding-bottom: 2px;'>   
+                  {% for error in form.password.errors %}           
+                     <small>{{ error }}</small>                       
+                  {% endfor %}                                        
+               </div>                                                 
+            {% endif %}                                               
+         </div>                                                       
+      </div>                                                          
+      <!--                                                            
+      <input type='password'                                              
+             name='password'                                        
+             id='id_password'                                       
+             class='form-control form-control-sm'                     
+             maxlength='25'                                           
+             required>                                                
+      -->                 
+      
+      <div class='form-group row'>                                   
+         <div class='col-lg-5 offset-lg-1'>                                      
+            {% csrf_token %}                                         
+            <input type='hidden' name='next' value='{{ next }}'>     
+            <button type='submit' class='btn btn-outline-primary'>   
+               <i class='fas fa-sign-in-alt'></i> Log in              
+            </button>                                                
+         </div>                                                      
+         <div class='col-lg-6'></div>                                
+      </div>                                                         
+   </form>
+{% endblock %}
+
+{% block domready %}
+
+{% endblock %}
